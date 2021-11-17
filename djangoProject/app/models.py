@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 
 class Group(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=150)
 
 
 class Client(models.Model):
@@ -14,11 +14,11 @@ class Client(models.Model):
 
 
 class Product(models.Model):
-    category = models.CharField(max_length=30)
-    name = models.CharField(max_length=50)
+    category = models.CharField(max_length=100)
+    name = models.CharField(max_length=200)
     stock = models.IntegerField()
     image = models.URLField()
-    description = models.CharField(max_length=300)
+    description = models.CharField(max_length=1000)
     price = models.FloatField()
     seller = models.ForeignKey(Client, on_delete=models.CASCADE)
     group = models.ForeignKey(Group, null=True, on_delete=models.CASCADE)
