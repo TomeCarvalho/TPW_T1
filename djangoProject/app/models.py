@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 
+
 # Create your models here.
 
 
@@ -10,19 +11,23 @@ class Group(models.Model):
 
 
 class Client(models.Model):
-    pass
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 
 class Product(models.Model):
     category = models.CharField(max_length=100)
     name = models.CharField(max_length=200)
     stock = models.IntegerField()
-    image = models.URLField()
+    # image = models.URLField()
     description = models.CharField(max_length=1000)
     price = models.FloatField()
     seller = models.ForeignKey(Client, on_delete=models.CASCADE)
-    group = models.ForeignKey(Group, null=True, on_delete=models.CASCADE)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, null=True, on_delete=models.CASCADE, blank=True)
+
+
+class ProductImage(models.Model):
+    url = models.URLField()
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
 
 class Sale(models.Model):

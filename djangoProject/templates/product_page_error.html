@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="m-3">
+        <p>Whoops! The product requested in the URL does not exist.</p>
+        <p>ID of the requested product: {{ i }}</p>
+        <form action="/">
+            <button type="submit" class="btn btn-primary">Back to Dashboard</button>
+        </form>
+    </div>
+{% endblock %}
