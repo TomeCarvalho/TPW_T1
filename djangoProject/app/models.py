@@ -10,7 +10,7 @@ class Group(models.Model):
 
 
 class Client(models.Model):
-    pass
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 
 class Product(models.Model):
@@ -21,8 +21,7 @@ class Product(models.Model):
     description = models.CharField(max_length=1000)
     price = models.FloatField()
     seller = models.ForeignKey(Client, on_delete=models.CASCADE)
-    group = models.ForeignKey(Group, null=True, on_delete=models.CASCADE)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    group = models.ManyToManyField(Group, blank=True)
 
 
 class Sale(models.Model):
