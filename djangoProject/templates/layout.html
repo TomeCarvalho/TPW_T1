@@ -40,7 +40,7 @@
         <span class="navbar-brand">XLO</span>
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0" style="width: 100%">
             <li class="nav-item {% if dashboardPage %} active {% endif %}">
-                <a class="nav-link" href="/wiki">Dashboard</a>
+                <a class="nav-link" href="/dashboard">Dashboard</a>
             </li>
             {% if logged %}
                 <li class="nav-item {% if createPage %} active {% endif %}">
@@ -48,7 +48,7 @@
                 </li>
             {% endif %}
         </ul>
-        <form action="/wiki" method="get" class="form-inline my-2 my-lg-0"
+        <form action="/dashboard" method="get" class="form-inline my-2 my-lg-0"
               style="display: flex; justify-content: end; width: 70%">
             {% csrf_token %}
             <input name="search_prompt" class="form-control mr-sm-2" type="search" placeholder="Search"
