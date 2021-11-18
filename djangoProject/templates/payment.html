@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <h2>{{ title }}</h2>
+    <form action="." method="post" class="form-horizontal ml-5">
+        {% csrf_token %}
+        <div class="form-row mt-2 p-2">
+            {{ form.card }}
+            {{ form.number.label_tag }}
+            <div class="mt-1">
+                {{ form.number }}
+            </div>
+        </div>
+        <div class="form-row mt-2 p-2">
+            <div class="ml-3">
+                {{ form.date }}
+            </div>
+            <div class="ml-3">
+                {{ form.cvc }}
+            </div>
+        </div>
+        <div class="form-group mt-2 p-2 ml-3">
+            {{ form.name }}
+        </div>
+        <input type="submit" value="PAY!" class="btn btn-default">
+    </form>
+
+{% endblock %}

@@ -1,17 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.views.decorators.csrf import csrf_protect
-from .forms import SignUpForm
+from .forms import SignUpForm, PaymentForm
 from django.shortcuts import render
 from app.models import Group, Product, Sale, ProductInstance
 from django.core.exceptions import ObjectDoesNotExist
 
 from itertools import zip_longest
-
-
-def index(request):
-    return render(request, 'layout.html')
-
 
 # Create your views here.
 
@@ -38,9 +33,7 @@ def dashboard(request):
         product_list = Product.objects.filter(name__icontains=search_prompt)
     else:
         product_list = Product.objects.all()
-    print(product_list)
     pgs = zip_longest(*(iter(product_list),) * 3)  # chunky!
-    print(pgs)
     tparams = {
         "logged": request.user.is_authenticated,
         "three_page_group": pgs,
@@ -89,3 +82,45 @@ def product_page(request, i):
         return render(request, 'product_page.html', params)
     except ObjectDoesNotExist:
         return render(request, 'product_page_error.html', {'i': i})
+
+
+def cart(request):
+    logged = request.user.is_authenticated
+    if logged:
+        product_instance_list = ProductInstance.objects.filter(client=request.user)
+        products = []
+        for product in product_instance_list:
+            products.append(product.product)
+        tparams = {
+            "logged": logged,
+            "products": products
+        }
+        return render(request, "cart.html", tparams)
+    else:
+        return redirect(dashboard)
+
+
+def checkout(request):
+    logged = request.user.is_authenticated
+    if logged:
+        if request.method == "POST":
+            form = PaymentForm(request.POST)
+            if form.is_valid():
+                print("YEY")
+                return redirect(dashboard)
+            else:
+                print("NEY")
+        else:
+            print("UH")
+            form = PaymentForm()
+        tparams = {
+            "logged": logged,
+            "form": form,
+        }
+        return render(request, "payment.html", tparams)
+    else:
+        return redirect(dashboard)
+
+
+
+
