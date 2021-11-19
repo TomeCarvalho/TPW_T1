@@ -99,7 +99,7 @@ def product_page(request, i):
         groups = product.group.all()
         n = range(1, len(images))
         params = {
-            'category': product.category,
+            'category': product.category.capitalize(),
             'name': product.name,
             'stock': product.stock,
             'images': images,
@@ -119,6 +119,8 @@ def product_page(request, i):
 @login_required
 def add_to_cart(request, product_id, quantity):
     """Adds a product to the cart. Requires the user to be logged in."""
+    if request.method == 'POST':
+        quantity = request.POST['quantity']
     if quantity <= 0:
         messages.error(request, 'The quantity to add must be a positive number.')
     not_enough_stock_msg = 'The seller does\'nt have enough of this product in stock at the moment.'
