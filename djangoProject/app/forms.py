@@ -29,10 +29,8 @@ class SearchForm(forms.Form):
     all_groups = Group.objects.all()
     group_list = [('', '----------')]
     for group in all_groups:
-        print(group.name)
         group_list.append((group.name, group.name))
     GROUPS = tuple(group_list)
-    print(GROUPS)
     by_group = forms.ChoiceField(choices=GROUPS, required=False)
     by_price_Lower = forms.IntegerField(required=False, label="Lower Limit")
     by_price_Lower.widget.attrs.update({'style': 'width: 3em'})
