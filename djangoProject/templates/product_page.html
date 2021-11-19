@@ -57,13 +57,15 @@
             {% endif %}
             <br>
             {% if logged %}
-                <form method="post" action="add_to_cart">
+                <form method="post" action="/add_to_cart">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="inputQuantity" class="sr-only">Quantity</label>
                         <input class="form-control w-25 float-left mr-1" name="quantity" type="number" min="1"
                                max="{{ stock }}"
                                placeholder="Quantity" aria-label="Quantity" id="inputQuantity">
+                        <input name="product_id" class="d-none" type="number" value="{{ i }}">
+                        <input name="page" class="d-none" value="product_page.html">
                         {#                    <a class="btn btn-primary" href="">Add to Cart</a>#}
                         <input class="btn btn-primary" type="submit" value="Add to Cart"/>
                     </div>

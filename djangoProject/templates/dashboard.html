@@ -2,7 +2,7 @@
 {% block content %}
     <div class="container mt-3 p-1">
         <form method="post">
-            {%  csrf_token %}
+            {% csrf_token %}
             <div class="form-row">
                 <div class="mr-1">
                     {{ form.by_category.label_tag }}

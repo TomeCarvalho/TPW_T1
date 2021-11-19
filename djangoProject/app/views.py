@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.views.decorators.csrf import csrf_protect
@@ -38,7 +39,6 @@ def dashboard(request):
     if request.method == 'POST':
         form = SearchForm(request.POST)
         if form.is_valid():
-
             group = form.cleaned_data.get('by_group')
             category = form.cleaned_data.get('by_category')
             upper = form.cleaned_data.get('by_price_Upper')
@@ -116,32 +116,49 @@ def product_page(request, i):
         return render(request, 'product_page_error.html', {'i': i})
 
 
+NOT_ENOUGH_STOCK_MSG = 'The seller doesn\'t have enough of this product in stock at the moment.'
+INVALID_QTY_MSG = 'Invalid quantity. It must be a positive number.'
+ADDED_MSG = 'Product added to cart!'
+
+
 @login_required
-def add_to_cart(request, product_id, quantity):
+def add_to_cart(request):
     """Adds a product to the cart. Requires the user to be logged in."""
     if request.method == 'POST':
+        product_id = request.POST['product_id']
         quantity = request.POST['quantity']
+    else:  # If a sneaky user types it into the URL bar
+        return redirect(dashboard)
+    try:
+        quantity = int(quantity)
+    except ValueError:
+        # messages.info(request, INVALID_QTY_MSG)
+        return redirect(dashboard)
     if quantity <= 0:
-        messages.error(request, 'The quantity to add must be a positive number.')
-    not_enough_stock_msg = 'The seller does\'nt have enough of this product in stock at the moment.'
+        # messages.info(request, INVALID_QTY_MSG)
+        return redirect(dashboard)
+
     user = request.user
+    print(f'{user = }')
     product = Product.objects.get(id=product_id)
     try:  # Check if the user already has the product in their cart and thus is just increasing the quantity
-        user_instance = ProductInstance.objects.get(client__user=user, product=product)
+        user_instance = ProductInstance.objects.get(client=user, product=product)
         if user_instance.quantity + quantity > product.stock:
-            messages.error(request, not_enough_stock_msg)
-            return
+            # messages.info(request, NOT_ENOUGH_STOCK_MSG)
+            return redirect(dashboard)
         user_instance.quantity += quantity
+        user_instance.save()
     except ObjectDoesNotExist:
         if quantity > product.stock:
-            messages.error(request, not_enough_stock_msg)
-            return
+            # messages.error(request, NOT_ENOUGH_STOCK_MSG)
+            return redirect(dashboard)
         ProductInstance(
             product=product,
             quantity=quantity,
             client=user
         ).save()
-    messages.success(request, 'Product added to cart!')
+    # messages.info(request, 'Product added to cart!')
+    return redirect(dashboard)
 
 
 def cart(request):
