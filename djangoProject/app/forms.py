@@ -20,4 +20,3 @@ class PaymentForm(forms.Form):
     date = forms.DateField(widget=forms.widgets.DateInput(format="%m/%Y"))
     name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': 'Name'}))
     cvc = forms.IntegerField(min_value=100, max_value=999, widget=forms.TextInput(attrs={'placeholder': 'CVC'}))
-
