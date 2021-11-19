@@ -13,6 +13,8 @@ from itertools import zip_longest
 
 
 # Create your views here.
+def index(request):
+    return redirect(dashboard)
 
 
 @csrf_protect
@@ -58,8 +60,6 @@ def dashboard(request):
             product_list = Product.objects.filter(name__icontains=search_prompt)
         else:
             product_list = Product.objects.all()
-
-
 
     pgs = zip_longest(*(iter(product_list),) * 3)  # chunky!
     tparams = {
