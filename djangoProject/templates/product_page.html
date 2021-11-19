@@ -41,13 +41,21 @@
     </div>
 
     <div class="w-50 float-left p-3">
-        <h2>{{ name }}</h2>
+        <h2><b>{{ name }}</b></h2>
         <h3>{{ price }}€</h3>
         <h4>{{ stock }} in stock</h4>
         <p>Product ID: {{ i }}</p>
-        <p>Seller: {{ seller }}</p>
+        <p>Sold by {{ seller }}</p>
         <p>Category: {{ category }}</p>
         <p>{{ description }}</p>
+        {% if groups %}
+            <div>
+                {% for group in groups %}
+                    <span class="badge badge-primary">{{ group.name }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <br>
         <button class="btn btn-primary">Add to Cart</button>
     </div>
 
