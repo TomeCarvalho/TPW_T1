@@ -73,20 +73,40 @@ def dashboard(request):
 
 def myproducts(request):
     logged = request.user.is_authenticated
+    search_prompt = ''
     if not logged:
         return redirect(dashboard)
-    search_prompt = request.GET.get('search_prompt', '')
-    if search_prompt:
-        product_list = Product.objects.filter(name__icontains=search_prompt)
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            group = form.cleaned_data.get('by_group')
+            category = form.cleaned_data.get('by_category')
+            upper = form.cleaned_data.get('by_price_Upper')
+            lower = form.cleaned_data.get('by_price_Lower')
+            q = Q(seller=request.user)
+
+            if group:
+                q &= Q(group__name=group)
+            if category:
+                q &= Q(category=category)
+            if upper:
+                q &= Q(price__lte=upper)
+            if lower:
+                q &= Q(price__gte=lower)
+            product_list = Product.objects.filter(q)
     else:
-        product_list = Product.objects.all()
-    print(product_list)
+        search_prompt = request.GET.get('search_prompt', '')
+        form = SearchForm()
+        if search_prompt:
+            product_list = Product.objects.filter(name__icontains=search_prompt, seller=request.user)
+        else:
+            product_list = Product.objects.filter(seller=request.user)
     pgs = zip_longest(*(iter(product_list),) * 3)  # chunky!
-    print(pgs)
     tparams = {
         "logged": logged,
         "three_page_group": pgs,
-        "search_prompt": search_prompt[1:-1]
+        "search_prompt": search_prompt[1:-1],
+        "form": form
     }
     return render(request, "dashboard.html", tparams)
 
@@ -165,12 +185,13 @@ def cart(request):
     logged = request.user.is_authenticated
     if logged:
         product_instance_list = ProductInstance.objects.filter(client=request.user)
-        products = []
+        total = 0
         for product in product_instance_list:
-            products.append(product.product)
+            total += product.product.price * product.quantity
         tparams = {
             "logged": logged,
-            "products": products
+            "products": product_instance_list,
+            "total": total
         }
         return render(request, "cart.html", tparams)
     else:
@@ -188,7 +209,6 @@ def checkout(request):
             else:
                 print("NEY")
         else:
-            print("UH")
             form = PaymentForm()
         tparams = {
             "logged": logged,
