@@ -17,8 +17,8 @@
                                 <p class="card-text max-lines">{{ product.description }}</p>
                                 <br>
                                 <p class="card-text">{{ product.price }}€</p>
-                                <a href="/products/{{ product.id }}/" class="btn btn-primary">Visit Page</a>
-                                <a href="/products/{{ product.id }}/" class="btn btn-primary">Add to Cart</a>
+                                <a href="/products/{{ product.id }}" class="btn btn-primary">Visit Page</a>
+                                <a href="/products/{{ product.id }}" class="btn btn-primary">Add to Cart</a>
                                 {% if user.0.admin %}
                                     {% if product.hidden %}
                                         <form action="/unhidepage/" method="post">
