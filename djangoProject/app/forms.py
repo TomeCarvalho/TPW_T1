@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import Group
 
 
 class SignUpForm(UserCreationForm):
@@ -20,3 +21,19 @@ class PaymentForm(forms.Form):
     date = forms.DateField(widget=forms.widgets.DateInput(format="%m/%Y"))
     name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': 'Name'}))
     cvc = forms.IntegerField(min_value=100, max_value=999, widget=forms.TextInput(attrs={'placeholder': 'CVC'}))
+
+
+class SearchForm(forms.Form):
+    CATEGORIES = (('', '----------'), ('Pants', 'Pants'), ('Jeans', 'Jeans'), ('Shirts', 'Shirts'), ('Jackets', 'Jackets'), ('Underwear', 'Underwear'))
+    by_category = forms.ChoiceField(choices=CATEGORIES, required=False)
+    all_groups = Group.objects.all()
+    group_list = [('', '----------')]
+    for group in all_groups:
+        group_list.append((group.name, group.name))
+    GROUPS = tuple(group_list)
+    by_group = forms.ChoiceField(choices=GROUPS, required=False)
+    by_price_Lower = forms.IntegerField(required=False, label="Lower Limit")
+    by_price_Lower.widget.attrs.update({'style': 'width: 3em'})
+    by_price_Upper = forms.IntegerField(required=False, label="Upper Limit")
+    by_price_Upper.widget.attrs.update({'style': 'width: 3em'})
+
