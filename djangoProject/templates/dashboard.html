@@ -1,5 +1,37 @@
 {% extends "layout.html" %}
 {% block content %}
+    <div class="container mt-3 p-1">
+        <form method="post">
+            {%  csrf_token %}
+            <div class="form-row">
+                <div class="mr-1">
+                    {{ form.by_category.label_tag }}
+                </div>
+                <div class="mr-1">
+                    {{ form.by_category }}
+                </div>
+                <div class="mr-1">
+                    {{ form.by_group.label_tag }}
+                </div>
+                <div class="mr-1">
+                    {{ form.by_group }}
+                </div>
+                <div class="mr-1">
+                    {{ form.by_price_Lower.label_tag }}
+                </div>
+                <div class="mr-1">
+                    {{ form.by_price_Lower }}
+                </div>
+                <div class="mr-1">
+                    {{ form.by_price_Upper.label_tag }}
+                </div>
+                <div class="mr-1">
+                    {{ form.by_price_Upper }}
+                </div>
+                <input type="submit" value="Filter" class="btn btn-primary ml-2">
+            </div>
+        </form>
+    </div>
     {% ifnotequal search_prompt '' %}
         <p class="text-center">Results for: {{ search_prompt }}</p>
     {% endifnotequal %}

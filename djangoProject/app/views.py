@@ -2,11 +2,12 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.views.decorators.csrf import csrf_protect
-from .forms import SignUpForm, PaymentForm
+from .forms import SignUpForm, PaymentForm, SearchForm
 from django.shortcuts import render
-from app.models import Group, Product, Sale, ProductInstance
+from app.models import Group, Product, Sale, ProductInstance, ProductImage
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
+from django.db.models import Q
 
 from itertools import zip_longest
 
@@ -31,16 +32,41 @@ def signup(request):
 
 
 def dashboard(request):
-    search_prompt = request.GET.get('search_prompt', '')
-    if search_prompt:
-        product_list = Product.objects.filter(name__icontains=search_prompt)
+    search_prompt = ''
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+
+            group = form.cleaned_data.get('by_group')
+            category = form.cleaned_data.get('by_category')
+            upper = form.cleaned_data.get('by_price_Upper')
+            lower = form.cleaned_data.get('by_price_Lower')
+            q = Q()
+            if group:
+                q &= Q(group__name=group)
+            if category:
+                q &= Q(category=category)
+            if upper:
+                q &= Q(price__lte=upper)
+            if lower:
+                q &= Q(price__gte=lower)
+            product_list = Product.objects.filter(q)
     else:
-        product_list = Product.objects.all()
+        form = SearchForm()
+        search_prompt = request.GET.get('search_prompt', '')
+        if search_prompt:
+            product_list = Product.objects.filter(name__icontains=search_prompt)
+        else:
+            product_list = Product.objects.all()
+
+
+
     pgs = zip_longest(*(iter(product_list),) * 3)  # chunky!
     tparams = {
         "logged": request.user.is_authenticated,
         "three_page_group": pgs,
-        "search_prompt": search_prompt[1:-1]
+        "search_prompt": search_prompt[1:-1],
+        "form": form
     }
     return render(request, "dashboard.html", tparams)
 
