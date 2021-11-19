@@ -11,7 +11,7 @@
                         <div class="card">
                             {% csrf_token %}
                             <img class="card-img-top" src="{{ product.images.0.url }}" alt="Card image cap"
-                                 style="height: 18rem;">
+                                 style="height: 18rem; object-fit: scale-down">
                             <div class="card-body bg-secondary text-light">
                                 <h5 class="card-title">{{ product.name }}</h5>
                                 <p class="card-text max-lines">{{ product.description }}</p>
