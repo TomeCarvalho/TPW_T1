@@ -73,7 +73,7 @@ def product_page(request, i):
         groups = product.group.all()
         n = range(1, len(images))
         params = {
-            'category': product.category,
+            'category': product.category.capitalize(),
             'name': product.name,
             'stock': product.stock,
             'images': images,
