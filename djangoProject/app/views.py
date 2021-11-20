@@ -218,3 +218,18 @@ def checkout(request):
         return render(request, "payment.html", tparams)
     else:
         return redirect(dashboard)
+
+
+@login_required
+def history(request):
+    """Returns the purchase and sale history of the user."""
+    user = request.user
+    purchases = ProductInstance.objects.filter(client=user, sold=True).select_related()
+    sales = ProductInstance.objects.filter(product__seller=user, sold=True).select_related()
+    print(f'{purchases = }\n{sales = }')
+    params = {
+        'purchases': purchases,
+        'sales': sales
+    }
+    return render(request, 'history.html', params)
+
