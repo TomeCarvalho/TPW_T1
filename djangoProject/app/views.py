@@ -223,13 +223,14 @@ def checkout(request):
 @login_required
 def history(request):
     """Returns the purchase and sale history of the user."""
+    logged = request.user.is_authenticated
     user = request.user
     purchases = ProductInstance.objects.filter(client=user, sold=True).select_related()
     sales = ProductInstance.objects.filter(product__seller=user, sold=True).select_related()
     print(f'{purchases = }\n{sales = }')
     params = {
+        'logged': logged,
         'purchases': purchases,
         'sales': sales
     }
     return render(request, 'history.html', params)
-

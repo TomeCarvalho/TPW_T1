@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 
+
 # Create your models here.
 
 
@@ -35,6 +36,7 @@ class Sale(models.Model):
     @property
     def total_price(self):
         return sum(prod_inst.product.price for prod_inst in self.productinstance_set.all())
+
 
 class ProductInstance(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
