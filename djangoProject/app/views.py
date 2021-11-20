@@ -187,21 +187,24 @@ def add_to_cart(request):
         quantity = int(quantity)
     except ValueError:
         # messages.info(request, INVALID_QTY_MSG)
+        print(f'ValueError with {product_id = }, {quantity = }')
         return redirect(dashboard)
     if quantity <= 0:
         # messages.info(request, INVALID_QTY_MSG)
+        print(f'Invalid Quantity with {quantity = }')
         return redirect(dashboard)
 
     user = request.user
-    print(f'{user = }')
     product = Product.objects.get(id=product_id)
     try:  # Check if the user already has the product in their cart and thus is just increasing the quantity
         user_instance = ProductInstance.objects.get(client=user, product=product)
         if user_instance.quantity + quantity > product.stock:
             # messages.info(request, NOT_ENOUGH_STOCK_MSG)
+            print(f'Not enough stock of {product.name} for {user.username} ({user_instance.quantity + quantity}/{product.stock})')
             return redirect(dashboard)
         user_instance.quantity += quantity
         user_instance.save()
+        print(f'Increased quantity of {product} in {user}\'s cart by {quantity}')
     except ObjectDoesNotExist:
         if quantity > product.stock:
             # messages.error(request, NOT_ENOUGH_STOCK_MSG)
@@ -209,8 +212,10 @@ def add_to_cart(request):
         ProductInstance(
             product=product,
             quantity=quantity,
-            client=user
+            client=user,
+            sold=False
         ).save()
+        print(f'Instance of product {product} added to {user}\'s cart')
     # messages.info(request, 'Product added to cart!')
     return redirect(dashboard)
 
@@ -239,7 +244,20 @@ def checkout(request):
             form = PaymentForm(request.POST)
             if form.is_valid():
                 print("ei")
-                ProductInstance.objects.filter(client=request.user, sold=False).update(sold=True)
+                prod_insts = ProductInstance.objects.filter(client=request.user, sold=False)
+                if any(prod_inst.quantity > prod_inst.product.stock for prod_inst in prod_insts):
+                    return redirect(dashboard)  # TODO: handle this in a better fashion
+                # TODO: figure out why the transaction number, total transaction price and payment method are missing
+                sale = Sale(client=request.user, paymentMethod="Tmp Payment Method")  # TODO: get the payment method
+                sale.save()
+                for prod_inst in prod_insts:
+                    product = prod_inst.product
+                    product.stock -= prod_inst.quantity
+                    prod_inst.sold = True
+                    prod_inst.sale = sale
+                    prod_inst.save()
+                    product.save()
+                sale.save()
                 return redirect(dashboard)
             else:
                 print("NEY")
@@ -252,3 +270,19 @@ def checkout(request):
         return render(request, "payment.html", tparams)
     else:
         return redirect(dashboard)
+
+
+@login_required
+def history(request):
+    """Returns the purchase and sale history of the user."""
+    logged = request.user.is_authenticated
+    user = request.user
+    purchases = ProductInstance.objects.filter(client=user, sold=True).select_related()
+    sales = ProductInstance.objects.filter(product__seller=user, sold=True).select_related()
+    print(f'{purchases = }\n{sales = }')
+    params = {
+        'logged': logged,
+        'purchases': purchases,
+        'sales': sales
+    }
+    return render(request, 'history.html', params)

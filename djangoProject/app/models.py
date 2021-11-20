@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 
+
 # Create your models here.
 
 
@@ -31,6 +32,10 @@ class ProductImage(models.Model):
 class Sale(models.Model):
     client = models.ForeignKey(User, on_delete=models.CASCADE)
     paymentMethod = models.CharField(max_length=100)
+
+    @property
+    def total_price(self):
+        return sum(prod_inst.product.price for prod_inst in self.productinstance_set.all())
 
 
 class ProductInstance(models.Model):
