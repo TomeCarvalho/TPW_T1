@@ -6,6 +6,7 @@
             <table class="table table-striped table-dark">
                 <tr>
                     <th>Transaction Number</th>
+                    <th>Total Transaction Price</th>
                     <th>Product</th>
                     <th>Quantity</th>
                     <th>Seller</th>
@@ -14,6 +15,7 @@
                 {% for prod_inst in purchases %}
                     <tr>
                         <td>{{ prod_inst.sale.id }}</td>
+                        <td>{{ prod_inst.sale.total_price }}</td>
                         <td><a href="/products/{{ prod_inst.product_id }}">{{ prod_inst.product.name }}</a></td>
                         <td>{{ prod_inst.quantity }}</td>
                         <td>{{ prod_inst.product.seller }}</td>
@@ -29,6 +31,7 @@
             <table class="table table-striped table-dark">
                 <tr>
                     <th>Transaction Number</th>
+                    <th>Total Transaction Price</th>
                     <th>Product</th>
                     <th>Quantity</th>
                     <th>Buyer</th>
@@ -37,6 +40,7 @@
                 {% for prod_inst in sales %}
                     <tr>
                         <td>{{ prod_inst.sale.id }}</td>
+                        <td>{{ prod_inst.sale.total_price }}</td>
                         <td><a href="/products/{{ prod_inst.product_id }}">{{ prod_inst.product.name }}</a></td>
                         <td>{{ prod_inst.quantity }}</td>
                         <td>{{ prod_inst.client }}</td>

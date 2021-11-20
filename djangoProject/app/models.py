@@ -32,6 +32,9 @@ class Sale(models.Model):
     client = models.ForeignKey(User, on_delete=models.CASCADE)
     paymentMethod = models.CharField(max_length=100)
 
+    @property
+    def total_price(self):
+        return sum(prod_inst.product.price for prod_inst in self.productinstance_set.all())
 
 class ProductInstance(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
