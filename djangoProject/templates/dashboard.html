@@ -1,5 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
+    {% if my_products_page %}
+    <div class="container mt-3 p-1">
+        <a href="/newproduct/" class="btn btn-primary">+ NEW PRODUCT</a>
+    </div>
+    {% endif %}
     <div class="container mt-3 p-1">
         <form method="post">
             {% csrf_token %}

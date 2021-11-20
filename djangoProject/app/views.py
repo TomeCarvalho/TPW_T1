@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.views.decorators.csrf import csrf_protect
-from .forms import SignUpForm, PaymentForm, SearchForm
+from .forms import SignUpForm, PaymentForm, SearchForm, ProductForm
 from django.shortcuts import render
 from app.models import Group, Product, Sale, ProductInstance, ProductImage
 from django.core.exceptions import ObjectDoesNotExist
@@ -106,9 +106,43 @@ def myproducts(request):
         "logged": logged,
         "three_page_group": pgs,
         "search_prompt": search_prompt[1:-1],
-        "form": form
+        "form": form,
+        "my_products_page": True
     }
     return render(request, "dashboard.html", tparams)
+
+def newproduct(request):
+    if request.method == "POST":
+        form = ProductForm(request.POST)
+        print(request.POST)
+        post = request.POST
+        if form.is_valid():
+            # processar dados e inserir na bd!
+            category = form.cleaned_data['category']
+            name = form.cleaned_data['name']
+            stock = form.cleaned_data['stock']
+            description = form.cleaned_data['description']
+            price = form.cleaned_data['price']
+            group = form.cleaned_data['group']
+            img = form.cleaned_data['image']
+            if group in [grp.name for grp in Group.objects.all()]:
+                real_group = Group.objects.get(name=group)
+            else:
+                real_group = Group(name=group)
+                real_group.save()
+            new_product = Product(category=category,name=name,stock=stock,description=description,price=price,seller=request.user)
+            new_product.save()
+            new_product.group.add(real_group)
+            image = ProductImage(url=img,product=new_product)
+            image.save()
+            return redirect(dashboard)
+    else:
+        form = ProductForm()
+
+    return render(request, "newproduct.html", {
+        "form": form,
+        "logged": request.user.is_authenticated,
+    })
 
 
 def product_page(request, i):
