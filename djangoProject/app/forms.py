@@ -17,8 +17,9 @@ class SignUpForm(UserCreationForm):
 class PaymentForm(forms.Form):
     CHOICES = (('MasterCard', 'MasterCard'), ('Visa', 'Visa'), ('Paypal', 'Paypal'))
     card = forms.ChoiceField(choices=CHOICES)
-    number = forms.IntegerField(max_value=9999999999999999, min_value=1000000000000000, widget=forms.TextInput(attrs={'placeholder': 'Card Nmber'}))
-    date = forms.DateField(widget=forms.widgets.DateInput(format="%m/%Y"))
+    number = forms.IntegerField(max_value=9999999999999999, min_value=1000000000000000,
+                                widget=forms.TextInput(attrs={'placeholder': 'Card Number'}))
+    date = forms.DateField(widget=forms.TextInput(attrs={'placeholder': '00/00/00'}))
     name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': 'Name'}))
     cvc = forms.IntegerField(min_value=100, max_value=999, widget=forms.TextInput(attrs={'placeholder': 'CVC'}))
 

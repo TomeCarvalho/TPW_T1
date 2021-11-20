@@ -184,7 +184,7 @@ def add_to_cart(request):
 def cart(request):
     logged = request.user.is_authenticated
     if logged:
-        product_instance_list = ProductInstance.objects.filter(client=request.user)
+        product_instance_list = ProductInstance.objects.filter(client=request.user, sold=False)
         total = 0
         for product in product_instance_list:
             total += product.product.price * product.quantity
@@ -204,7 +204,8 @@ def checkout(request):
         if request.method == "POST":
             form = PaymentForm(request.POST)
             if form.is_valid():
-                print("YEY")
+                print("ei")
+                ProductInstance.objects.filter(client=request.user, sold=False).update(sold=True)
                 return redirect(dashboard)
             else:
                 print("NEY")

@@ -37,4 +37,5 @@ class ProductInstance(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     client = models.ForeignKey(User, on_delete=models.CASCADE)
-    sale = models.ForeignKey(Sale, on_delete=models.CASCADE, null=True)
+    sale = models.ForeignKey(Sale, on_delete=models.CASCADE, null=True, blank=True)
+    sold = models.BooleanField()
