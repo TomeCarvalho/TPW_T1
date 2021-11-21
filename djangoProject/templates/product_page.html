@@ -76,7 +76,10 @@
                                 <input name="product_id" class="d-none" type="number" value="{{ i }}">
                                 <input name="page" class="d-none" value="product_page.html">
                                 {#                    <a class="btn btn-primary" href="">Add to Cart</a>#}
-                                <input class="btn btn-primary" type="submit" value="Add to Cart"/>
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fa fa-cart-plus"></i>
+                                    Add to Cart
+                                </button>
                             </div>
                         </form>
                     {% else %}
@@ -120,7 +123,11 @@
                     <form method="post" action="/product_hidden_toggle/">
                         {% csrf_token %}
                         <input name="product_id" class="d-none" type="number" value="{{ i }}">
-                        <input class="btn btn-primary" type="submit" value="{{ hidden_toggle_text }}"/>
+{#                        <input class="btn btn-primary" type="submit" value="{{ hidden_toggle_text }}"/>#}
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa {{ fa_icon }}"></i>
+                            {{ hidden_toggle_text }}
+                        </button>
                     </form>
                 {% endif %}
             {% else %}

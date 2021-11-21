@@ -39,7 +39,10 @@ class SearchForm(forms.Form):
     by_price_Lower.widget.attrs.update({'style': 'width: 3em'})
     by_price_Upper = forms.IntegerField(required=False, label="Upper Limit")
     by_price_Upper.widget.attrs.update({'style': 'width: 3em'})
-    arrows = (('', 'ASC'), ('', 'DES'))
+    CHOICES = (('', '----------'), ('name', 'Alphabetical ↑'), ('-name', 'Alphabetical ↓'), ('category', 'Category ↑'),
+               ('-category', 'Category ↓'), ('group', 'Group ↑'), ('-group', 'Group ↓'), ('price', 'Price ↑'),
+               ('-price', 'Price ↓'))
+    order = forms.ChoiceField(choices=CHOICES, required=False, label='Sort: ')
 
 
 class ProductForm(forms.Form):
