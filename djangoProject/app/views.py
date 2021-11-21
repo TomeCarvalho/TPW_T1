@@ -303,6 +303,15 @@ def history(request):
     }
     return render(request, 'history.html', params)
 
+@login_required
+def remove_from_cart(request):
+    if request.method == 'POST':
+        product_id = request.POST['productInstance']
+    else:  # If a sneaky user types it into the URL bar
+        return redirect(dashboard)
+    ProductInstance.objects.filter(id=product_id).delete()
+    return redirect(cart)
+
 
 @login_required
 def add_stock(request):

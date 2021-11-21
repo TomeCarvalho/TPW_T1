@@ -7,48 +7,41 @@
             </h1>
         </div>
 
-        <div class="cart">
-            <div class="table">
+      <div class="cart">
+        <table class="table table-striped table-dark">
 
-                <div class="layout-inline row th">
-                    <div class="col col-pro">Product</div>
-                    <div class="col col-price align-center ">
-                        Price
-                    </div>
-                    <div class="col col-qty align-center">QTY</div>
-                    <div class="col">Total</div>
-                </div>
+          <tr>
+            <th style="width: 27%">Product</th>
+            <th style="width: 27%">Price</th>
+            <th style="width: 27%">QTY</th>
+            <th style="width: 15%">Total</th>
+              <th style="width: 4%"></th>
+          </tr>
+          {% for product in products %}
+              <tr>
+                <td>{{ product.product.name }}</td>
+                <td>{{ product.product.price }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>{% widthratio  product.product.price 1  product.quantity %} €</td>
+                <td>
+                    <form method="post" action="/removefromcart/">
+                        {% csrf_token %}
+                        <input name="productInstance" class="d-none" type="number" value="{{ product.id }}">
+                        <input class="button btn-danger" type="submit" value="X">
+                    </form>
+                </td>
+              </tr>
+          {% endfor %}
 
-                {% for product in products %}
-                    <div class="layout-inline row">
-
-                        <div class="col col-pro layout-inline">
-                            <p>{{ product.product.name }}</p>
-                        </div>
-
-                        <div class="col col-price col-numeric align-center ">
-                            <p>{{ product.product.price }}</p>
-                        </div>
-
-                        <div class="col col-qty layout-inline">
-                            <p>{{ product.quantity }}</p>
-                        </div>
-
-                        <div class="col col-total col-numeric">
-                            <p>{% widthratio product.product.price 1 product.quantity %}</p>
-                        </div>
-                    </div>
-                {% endfor %}
-                <div class="row layout-inline">
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col">
-                        <p>Total: {{ total }} €</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <a href="checkout" class="btn btn-outline-success my-2 my-sm-0 btn-update">Check Out</a>
+          <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td align="right">Total: {{ total }} €</td>
+              <td></td>
+          </tr>
+        </table>
+      </div>
+          <a href="checkout" class="btn btn-outline-success my-2 my-sm-0 btn-update">Check Out</a>
     </div>
 {% endblock %}
