@@ -178,6 +178,7 @@ def product_page(request, i):
             'i': i,
             'groups': groups,
             'logged': request.user.is_authenticated,
+            'hidden': product.hidden,
             'hidden_toggle_text': 'Unhide Product' if product.hidden else 'Hide Product'
         }
         return render(request, 'product_page.html', params)
