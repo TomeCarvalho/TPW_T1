@@ -12,21 +12,23 @@
                 <tr>
                     <th style="width: 27%">Product</th>
                     <th style="width: 27%">Price</th>
-                    <th style="width: 27%">QTY</th>
+                    <th style="width: 27%">Quantity</th>
                     <th style="width: 15%">Total</th>
                     <th style="width: 4%"></th>
                 </tr>
-                {% for product in products %}
+                {% for prod_inst in prod_insts %}
                     <tr>
-                        <td>{{ product.product.name }}</td>
-                        <td>{{ product.product.price|floatformat:2 }}</td>
-                        <td>{{ product.quantity }}</td>
-                        <td>{% widthratio product.product.price|floatformat:2 1 product.quantity %} €</td>
+                        <td><a href="/products/{{ prod_inst.product_id }}">{{ prod_inst.product.name }}</a></td>
+                        <td>{{ prod_inst.product.price|floatformat:2 }}</td>
+                        <td>{{ prod_inst.quantity }}</td>
+                        <td>{{ prod_inst.price|floatformat:2 }} €</td>
                         <td>
                             <form method="post" action="/removefromcart/">
                                 {% csrf_token %}
                                 <input name="productInstance" class="d-none" type="number" value="{{ product.id }}">
-                                <input class="button btn-danger rounded" type="submit" value="X">
+                                <button class="button btn-danger rounded" type="submit">
+                                    <i class="fa-font fa fa-minus-square"></i>
+                                </button>
                             </form>
                         </td>
                     </tr>
@@ -36,13 +38,16 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td align="right">Total: {{ total|floatformat:2 }} €</td>
+                    <td>Total: {{ total|floatformat:2 }} €</td>
                     <td></td>
                 </tr>
             </table>
-            {% if products %}
+            {% if prod_insts %}
                 </div>
-                <a href="checkout" class="btn btn-outline-success my-2 my-sm-0 btn-update">Check Out</a>
+                <a href="checkout" class="btn btn-outline-success my-2 my-sm-0 btn-update">
+                    <i class="fa fa-credit-card"></i>
+                    Check Out
+                </a>
                 </div>
             {% endif %}
 {% endblock %}

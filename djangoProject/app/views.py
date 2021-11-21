@@ -257,7 +257,7 @@ def cart(request):
             total += product.product.price * product.quantity
         tparams = {
             "logged": logged,
-            "products": product_instance_list,
+            "prod_insts": product_instance_list,
             "total": total
         }
         return render(request, "cart.html", tparams)

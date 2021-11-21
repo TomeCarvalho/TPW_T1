@@ -43,3 +43,7 @@ class ProductInstance(models.Model):
     client = models.ForeignKey(User, on_delete=models.CASCADE)
     sale = models.ForeignKey(Sale, on_delete=models.CASCADE, null=True, blank=True)
     sold = models.BooleanField()
+
+    @property
+    def price(self):
+        return self.product.price * self.quantity
