@@ -188,7 +188,8 @@ def product_page(request, i, message=None):
             'groups': groups,
             'logged': request.user.is_authenticated,
             'hidden': product.hidden,
-            'hidden_toggle_text': 'Unhide Product' if product.hidden else 'Hide Product'
+            'hidden_toggle_text': 'Unhide Product' if product.hidden else 'Hide Product',
+            'fa_icon': 'fa-eye' if product.hidden else 'fa-eye-slash'
         }
         return render(request, 'product_page.html', params)
     except ObjectDoesNotExist:
