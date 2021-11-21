@@ -39,6 +39,7 @@ class SearchForm(forms.Form):
     by_price_Lower.widget.attrs.update({'style': 'width: 3em'})
     by_price_Upper = forms.IntegerField(required=False, label="Upper Limit")
     by_price_Upper.widget.attrs.update({'style': 'width: 3em'})
+    arrows = (('', 'ASC'), ('', 'DES'))
 
 
 class ProductForm(forms.Form):

@@ -37,12 +37,16 @@ def signup(request):
 def dashboard(request):
     search_prompt = None
     if request.method == 'POST':
+        print(request.POST)
         form = SearchForm(request.POST)
         if form.is_valid():
+            print("VALID")
             group = form.cleaned_data.get('by_group')
             category = form.cleaned_data.get('by_category')
             upper = form.cleaned_data.get('by_price_Upper')
             lower = form.cleaned_data.get('by_price_Lower')
+            order_list = []
+
             q = Q()
             if group:
                 q &= Q(group__name=group)
@@ -58,19 +62,26 @@ def dashboard(request):
                     q &= Q(hidden=False)
             else:
                 q &= Q(hidden=False)
-
             product_list = Product.objects.filter(q)
+        else:
+            product_list = Product.objects.all()
     else:
         form = SearchForm()
         search_prompt = request.GET.get('search_prompt', '')
         product_list = Product.objects.filter(name__icontains=search_prompt) if search_prompt else Product.objects.all()
-        if request.user.is_authenticated:
-            product_list = product_list.exclude(seller=request.user)
-            if not request.user.is_superuser:
-                product_list = product_list.exclude(hidden=True)
-        else:
+    if request.user.is_authenticated:
+        product_list = product_list.exclude(seller=request.user)
+        if not request.user.is_superuser:
             product_list = product_list.exclude(hidden=True)
+    else:
+        product_list = product_list.exclude(hidden=True)
 
+    if request.POST.get('sort_category'):
+        product_list = product_list.order_by('category')
+    elif request.POST.get('sort_group'):
+        product_list = product_list.order_by('group')
+    elif request.POST.get('sort_price'):
+        product_list = product_list.order_by('price')
     pgs = zip_longest(*(iter(product_list),) * 3)  # chunky!
     tparams = {
         "logged": request.user.is_authenticated,
