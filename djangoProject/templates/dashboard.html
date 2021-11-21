@@ -37,9 +37,9 @@
             </div>
         </form>
     </div>
-    {% ifnotequal search_prompt '' %}
+    {% if search_prompt %}
         <p class="text-center">Results for: {{ search_prompt }}</p>
-    {% endifnotequal %}
+    {% endif %}
     <div class="container">
         {% for products in three_page_group %}
             <div class="card-group">

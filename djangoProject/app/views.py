@@ -35,7 +35,7 @@ def signup(request):
 
 
 def dashboard(request):
-    search_prompt = ''
+    search_prompt = None
     if request.method == 'POST':
         form = SearchForm(request.POST)
         if form.is_valid():
@@ -75,7 +75,7 @@ def dashboard(request):
     tparams = {
         "logged": request.user.is_authenticated,
         "three_page_group": pgs,
-        "search_prompt": search_prompt[1:-1],
+        "search_prompt": search_prompt,
         "form": form
     }
     return render(request, "dashboard.html", tparams)
@@ -83,7 +83,7 @@ def dashboard(request):
 
 def myproducts(request):
     logged = request.user.is_authenticated
-    search_prompt = ''
+    search_prompt = None
     if not logged:
         return redirect(dashboard)
     if request.method == 'POST':
@@ -115,7 +115,7 @@ def myproducts(request):
     tparams = {
         "logged": logged,
         "three_page_group": pgs,
-        "search_prompt": search_prompt[1:-1],
+        "search_prompt": search_prompt,
         "form": form,
         "my_products_page": True
     }
