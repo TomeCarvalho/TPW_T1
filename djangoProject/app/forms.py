@@ -49,10 +49,10 @@ class ProductForm(forms.Form):
     )
     category = forms.ChoiceField(label="Category", choices=CATEGORIES, required=False)
     name = forms.CharField(label="Name", max_length=200, widget=forms.TextInput(attrs={'placeholder': 'Name'}))
-    stock = forms.IntegerField(label="Stock", widget=forms.NumberInput(attrs={'min': 0, 'max': 100}))
+    stock = forms.IntegerField(label="Stock", widget=forms.NumberInput(attrs={'min': 0, 'max': 100, 'placeholder': 0}))
     description = forms.CharField(label="Description", max_length=1000,
                                   widget=forms.TextInput(attrs={'placeholder': 'Description'}))
-    price = forms.FloatField(label="Price")
-    group = forms.CharField(label="Group", max_length=150, widget=forms.TextInput(attrs={'placeholder': 'Name'}),
+    price = forms.FloatField(label="Price", widget=forms.NumberInput(attrs={'placeholder': 0}))
+    group = forms.CharField(label="Group", max_length=150, widget=forms.TextInput(attrs={'placeholder': 'Optional'}),
                             required=False)
     image = forms.URLField(label="Image URL")
