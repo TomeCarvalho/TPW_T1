@@ -45,7 +45,7 @@ def dashboard(request):
             category = form.cleaned_data.get('by_category')
             upper = form.cleaned_data.get('by_price_Upper')
             lower = form.cleaned_data.get('by_price_Lower')
-            order_list = []
+            order = form.cleaned_data.get('order')
 
             q = Q()
             if group:
@@ -63,6 +63,9 @@ def dashboard(request):
             else:
                 q &= Q(hidden=False)
             product_list = Product.objects.filter(q)
+
+            if order:
+                product_list = product_list.order_by(order)
         else:
             product_list = Product.objects.all()
     else:
@@ -76,12 +79,6 @@ def dashboard(request):
     else:
         product_list = product_list.exclude(hidden=True)
 
-    if request.POST.get('sort_category'):
-        product_list = product_list.order_by('category')
-    elif request.POST.get('sort_group'):
-        product_list = product_list.order_by('group')
-    elif request.POST.get('sort_price'):
-        product_list = product_list.order_by('price')
     pgs = zip_longest(*(iter(product_list),) * 3)  # chunky!
     tparams = {
         "logged": request.user.is_authenticated,

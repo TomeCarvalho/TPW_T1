@@ -5,7 +5,6 @@
             <a href="/newproduct/" class="btn btn-primary">+ New Product</a>
         </div>
     {% endif %}
-    <!-- TODO make checkbox uncheck when others are pressed-->
     <div class="container mt-3 p-1">
         <form method="post">
             {% csrf_token %}
@@ -16,18 +15,12 @@
                 <div>
                     {{ form.by_category }}
                 </div>
-                <label class="checkbox-inline check">
-                    <input type="checkbox" name="sort_category" id="radio">
-                </label>
                 <div class="mr-2">
                     {{ form.by_group.label_tag }}
                 </div>
                 <div class="mr-2">
                     {{ form.by_group }}
                 </div>
-                <label class="checkbox-inline check">
-                    <input type="checkbox" name="sort_group" id="radio">
-                </label>
                 <div class="mr-2">
                     {{ form.by_price_Lower.label_tag }}
                 </div>
@@ -40,9 +33,12 @@
                 <div class="mr-2">
                     {{ form.by_price_Upper }}
                 </div>
-                <label class="checkbox-inline check">
-                    <input type="checkbox" name="sort_price" id="radio">
-                </label>
+                <div class="mr-2">
+                    {{ form.order.label_tag }}
+                </div>
+                <div class="mr-2">
+                    {{ form.order }}
+                </div>
                 <input type="submit" value="Filter" class="btn btn-primary ml-2">
             </div>
         </form>
