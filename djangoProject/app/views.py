@@ -157,7 +157,7 @@ def newproduct(request):
     })
 
 
-def product_page(request, i):
+def product_page(request, i, message=None):
     """Returns the page of the product with ID i if it exists, or an error page if not."""
     try:
         product = Product.objects.get(id=i)
@@ -167,6 +167,7 @@ def product_page(request, i):
         groups = product.group.all()
         n = range(1, len(images))
         params = {
+            'message': message,
             'category': product.category.capitalize(),
             'name': product.name,
             'stock': product.stock,
@@ -206,12 +207,13 @@ def add_to_cart(request):
         print(f'ValueError with {product_id = }, {quantity = }')
         params['alert_class'] = 'alert-danger'
         params['text'] = INVALID_QTY_MSG
-        return render(request, 'message.html', params)
+        return product_page(request, product_id, params)
+        #return render(request, 'message.html', params)
     if quantity <= 0:
         print(f'Invalid Quantity with {quantity = }')
         params['alert_class'] = 'alert-danger'
         params['text'] = INVALID_QTY_MSG
-        return render(request, 'message.html', params)
+        return product_page(request, product_id, params)
 
     user = request.user
     product = Product.objects.get(id=product_id)
@@ -221,18 +223,18 @@ def add_to_cart(request):
             print(f'Not enough stock of {product.name} for {user.username} ({user_instance.quantity + quantity}/{product.stock})')
             params['alert_class'] = 'alert-warning'
             params['text'] = NOT_ENOUGH_STOCK_MSG
-            return render(request, 'message.html', params)
+            return product_page(request, product_id, params)
         user_instance.quantity += quantity
         user_instance.save()
         print(f'Increased quantity of {product} in {user}\'s cart by {quantity}')
         params['alert_class'] = 'alert-success'
         params['text'] = ADDED_MSG
-        return render(request, 'message.html', params)
+        return product_page(request, product_id, params)
     except ObjectDoesNotExist:
         if quantity > product.stock:
             params['alert_class'] = 'alert-warning'
             params['text'] = NOT_ENOUGH_STOCK_MSG
-            return render(request, 'message.html', params)
+            return product_page(request, product_id, params)
         ProductInstance(
             product=product,
             quantity=quantity,
@@ -243,7 +245,7 @@ def add_to_cart(request):
 
     params['alert_class'] = 'alert-success'
     params['text'] = ADDED_MSG
-    return render(request, 'message.html', params)
+    return product_page(request, product_id, params)
 
 
 def cart(request):
