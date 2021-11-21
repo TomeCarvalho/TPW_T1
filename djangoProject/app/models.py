@@ -30,6 +30,7 @@ class ProductImage(models.Model):
 class Sale(models.Model):
     client = models.ForeignKey(User, on_delete=models.CASCADE)
     paymentMethod = models.CharField(max_length=100)
+    date = models.DateTimeField(auto_now_add=True)
 
     @property
     def total_price(self):
