@@ -265,7 +265,7 @@ def cart(request):
             total += product.product.price * product.quantity
         tparams = {
             "logged": logged,
-            "products": product_instance_list,
+            "prod_insts": product_instance_list,
             "total": total
         }
         return render(request, "cart.html", tparams)
@@ -358,6 +358,33 @@ def add_stock(request):
     print(f'Stock of {product.name} increased by {quantity}')
     return redirect(dashboard)
 
+@login_required
+def add_image(request):
+    if request.method == 'POST':
+        product_id = request.POST['product_id']
+        image = request.POST['image']
+    else:
+        return redirect(dashboard)
+    product = Product.objects.get(id=product_id)
+    image = ProductImage(url=image, product=product)
+    image.save()
+    return redirect(product_page, product_id)
+
+def add_group(request):
+    if request.method == 'POST':
+        product_id = request.POST['product_id']
+        group = request.POST['group']
+    else:
+        return redirect(dashboard)
+    if group in [grp.name for grp in Group.objects.all()]:
+        real_group = Group.objects.get(name=group)
+    else:
+        real_group = Group(name=group)
+        real_group.save()
+    product = Product.objects.get(id=product_id)
+    product.group.add(real_group)
+    product.save()
+    return redirect(product_page, product_id)
 
 @user_passes_test(lambda user: user.is_superuser)
 def product_hidden_toggle(request):
