@@ -217,7 +217,7 @@ def add_to_cart(request):
         params['alert_class'] = 'alert-danger'
         params['text'] = INVALID_QTY_MSG
         return product_page(request, product_id, params)
-        #return render(request, 'message.html', params)
+        # return render(request, 'message.html', params)
     if quantity <= 0:
         print(f'Invalid Quantity with {quantity = }')
         params['alert_class'] = 'alert-danger'
@@ -229,7 +229,8 @@ def add_to_cart(request):
     try:  # Check if the user already has the product in their cart and thus is just increasing the quantity
         user_instance = ProductInstance.objects.get(client=user, product=product, sold=False)
         if user_instance.quantity + quantity > product.stock:
-            print(f'Not enough stock of {product.name} for {user.username} ({user_instance.quantity + quantity}/{product.stock})')
+            print(
+                f'Not enough stock of {product.name} for {user.username} ({user_instance.quantity + quantity}/{product.stock})')
             params['alert_class'] = 'alert-warning'
             params['text'] = NOT_ENOUGH_STOCK_MSG
             return product_page(request, product_id, params)
@@ -357,7 +358,8 @@ def add_stock(request):
     product.stock += quantity
     product.save()
     print(f'Stock of {product.name} increased by {quantity}')
-    return redirect(dashboard)
+    return redirect(product_page, product_id)
+
 
 @login_required
 def add_image(request):
@@ -370,6 +372,7 @@ def add_image(request):
     image = ProductImage(url=image, product=product)
     image.save()
     return redirect(product_page, product_id)
+
 
 def add_group(request):
     if request.method == 'POST':
@@ -386,6 +389,7 @@ def add_group(request):
     product.group.add(real_group)
     product.save()
     return redirect(product_page, product_id)
+
 
 @user_passes_test(lambda user: user.is_superuser)
 def product_hidden_toggle(request):

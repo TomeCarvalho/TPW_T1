@@ -91,18 +91,24 @@
                                        placeholder="Stock to add" aria-label="stock" id="stockQuantity">
                                 <input name="product_id" class="d-none" type="number" value="{{ i }}">
                                 <input name="page" class="d-none" value="product_page.html">
-                                <input class="btn btn-primary" type="submit" value="Add Stock"/>
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fa fa-arrow-circle-up"></i>
+                                    Add Stock
+                                </button>
                             </div>
                         </form>
                         <form method="post" action="/add_image/">
                             {% csrf_token %}
-                            <div class="form-group">
+                            <div class="form-group w-100">
                                 <label for="imageURL" class="sr-only">Image</label>
                                 <input class="form-control w-25 float-left mr-1" name="image" type="url"
                                        placeholder="Image URL" aria-label="image" id="imageURL">
                                 <input name="product_id" class="d-none" type="number" value="{{ i }}">
                                 <input name="page" class="d-none" value="product_page.html">
-                                <input class="btn btn-primary" type="submit" value="Add New Image"/>
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fa fa-picture-o"></i>
+                                    Add Image
+                                </button>
                             </div>
                         </form>
                         <form method="post" action="/add_group/">
@@ -113,8 +119,10 @@
                                        placeholder="Group" aria-label="group" id="group">
                                 <input name="product_id" class="d-none" type="number" value="{{ i }}">
                                 <input name="page" class="d-none" value="product_page.html">
-                                {#                    <a class="btn btn-primary" href="">Add to Cart</a>#}
-                                <input class="btn btn-primary" type="submit" value="Add Group"/>
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fa fa-object-group"></i>
+                                    Add Group
+                                </button>
                             </div>
                         </form>
                     {% endif %}
