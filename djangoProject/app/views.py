@@ -265,7 +265,8 @@ def checkout(request):
                 if any(prod_inst.quantity > prod_inst.product.stock for prod_inst in prod_insts):
                     return redirect(dashboard)  # TODO: handle this in a better fashion
                 # TODO: figure out why the transaction number, total transaction price and payment method are missing
-                sale = Sale(client=request.user, paymentMethod="Tmp Payment Method")  # TODO: get the payment method
+                payment_method = form.cleaned_data['card']
+                sale = Sale(client=request.user, paymentMethod=payment_method)
                 sale.save()
                 for prod_inst in prod_insts:
                     product = prod_inst.product
