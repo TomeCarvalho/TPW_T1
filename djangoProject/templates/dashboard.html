@@ -62,6 +62,9 @@
                                 <div class="card-body bg-secondary text-light">
                                     <h5 class="card-title">{{ product.name }}</h5>
                                     <h5 class="card-text">{{ product.price }}€</h5>
+                                    {% if not product.group.all %}
+                                        <br>
+                                    {% endif %}
                                     {% for group in product.group.all %}
                                         <span class="badge badge-primary">{{ group.name }}</span>
                                     {% endfor %}
