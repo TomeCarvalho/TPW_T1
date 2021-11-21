@@ -15,7 +15,7 @@
                 {% for prod_inst in purchases %}
                     <tr>
                         <td>{{ prod_inst.sale.id }}</td>
-                        <td>{{ prod_inst.sale.total_price }}</td>
+                        <td>{{ prod_inst.sale.total_price }} €</td>
                         <td><a href="/products/{{ prod_inst.product_id }}">{{ prod_inst.product.name }}</a></td>
                         <td>{{ prod_inst.quantity }}</td>
                         <td>{{ prod_inst.product.seller }}</td>

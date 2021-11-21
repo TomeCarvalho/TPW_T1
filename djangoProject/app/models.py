@@ -33,7 +33,7 @@ class Sale(models.Model):
 
     @property
     def total_price(self):
-        return sum(prod_inst.product.price for prod_inst in self.productinstance_set.all())
+        return sum(prod_inst.product.price * prod_inst.quantity for prod_inst in self.productinstance_set.all())
 
 
 class ProductInstance(models.Model):

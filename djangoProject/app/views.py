@@ -273,7 +273,8 @@ def checkout(request):
                 prod_insts = ProductInstance.objects.filter(client=request.user, sold=False)
                 if any(prod_inst.quantity > prod_inst.product.stock for prod_inst in prod_insts):
                     return redirect(dashboard)  # TODO: handle this in a better fashion
-                sale = Sale(client=request.user, paymentMethod="Tmp Payment Method")  # TODO: get the payment method
+                payment_method = form.cleaned_data['card']
+                sale = Sale(client=request.user, paymentMethod=payment_method)
                 sale.save()
                 for prod_inst in prod_insts:
                     product = prod_inst.product
@@ -311,6 +312,16 @@ def history(request):
         'sales': sales
     }
     return render(request, 'history.html', params)
+
+
+@login_required
+def remove_from_cart(request):
+    if request.method == 'POST':
+        product_id = request.POST['productInstance']
+    else:  # If a sneaky user types it into the URL bar
+        return redirect(dashboard)
+    ProductInstance.objects.filter(id=product_id).delete()
+    return redirect(cart)
 
 
 @login_required
