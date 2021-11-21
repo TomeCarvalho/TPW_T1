@@ -194,6 +194,7 @@ ADDED_MSG = 'Product added to cart!'
 @login_required
 def add_to_cart(request):
     """Adds a product to the cart. Requires the user to be logged in."""
+    params = {'logged': request.user.is_authenticated}
     if request.method == 'POST':
         product_id = request.POST['product_id']
         quantity = request.POST['quantity']
@@ -202,30 +203,36 @@ def add_to_cart(request):
     try:
         quantity = int(quantity)
     except ValueError:
-        # messages.info(request, INVALID_QTY_MSG)
         print(f'ValueError with {product_id = }, {quantity = }')
-        return redirect(dashboard)
+        params['alert_class'] = 'alert-danger'
+        params['text'] = INVALID_QTY_MSG
+        return render(request, 'message.html', params)
     if quantity <= 0:
-        # messages.info(request, INVALID_QTY_MSG)
         print(f'Invalid Quantity with {quantity = }')
-        return redirect(dashboard)
+        params['alert_class'] = 'alert-danger'
+        params['text'] = INVALID_QTY_MSG
+        return render(request, 'message.html', params)
 
     user = request.user
     product = Product.objects.get(id=product_id)
     try:  # Check if the user already has the product in their cart and thus is just increasing the quantity
-        user_instance = ProductInstance.objects.get(client=user, product=product)
+        user_instance = ProductInstance.objects.get(client=user, product=product, sold=False)
         if user_instance.quantity + quantity > product.stock:
-            # messages.info(request, NOT_ENOUGH_STOCK_MSG)
-            print(
-                f'Not enough stock of {product.name} for {user.username} ({user_instance.quantity + quantity}/{product.stock})')
-            return redirect(dashboard)
+            print(f'Not enough stock of {product.name} for {user.username} ({user_instance.quantity + quantity}/{product.stock})')
+            params['alert_class'] = 'alert-warning'
+            params['text'] = NOT_ENOUGH_STOCK_MSG
+            return render(request, 'message.html', params)
         user_instance.quantity += quantity
         user_instance.save()
         print(f'Increased quantity of {product} in {user}\'s cart by {quantity}')
+        params['alert_class'] = 'alert-success'
+        params['text'] = ADDED_MSG
+        return render(request, 'message.html', params)
     except ObjectDoesNotExist:
         if quantity > product.stock:
-            # messages.error(request, NOT_ENOUGH_STOCK_MSG)
-            return redirect(dashboard)
+            params['alert_class'] = 'alert-warning'
+            params['text'] = NOT_ENOUGH_STOCK_MSG
+            return render(request, 'message.html', params)
         ProductInstance(
             product=product,
             quantity=quantity,
@@ -233,8 +240,10 @@ def add_to_cart(request):
             sold=False
         ).save()
         print(f'Instance of product {product} added to {user}\'s cart')
-    # messages.info(request, 'Product added to cart!')
-    return redirect(dashboard)
+
+    params['alert_class'] = 'alert-success'
+    params['text'] = ADDED_MSG
+    return render(request, 'message.html', params)
 
 
 def cart(request):
@@ -264,7 +273,6 @@ def checkout(request):
                 prod_insts = ProductInstance.objects.filter(client=request.user, sold=False)
                 if any(prod_inst.quantity > prod_inst.product.stock for prod_inst in prod_insts):
                     return redirect(dashboard)  # TODO: handle this in a better fashion
-                # TODO: figure out why the transaction number, total transaction price and payment method are missing
                 sale = Sale(client=request.user, paymentMethod="Tmp Payment Method")  # TODO: get the payment method
                 sale.save()
                 for prod_inst in prod_insts:
@@ -341,3 +349,7 @@ def product_hidden_toggle(request):
     product.hidden = not product.hidden
     product.save()
     return redirect(dashboard)
+
+
+def message(request):
+    return None

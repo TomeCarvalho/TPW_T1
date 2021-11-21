@@ -1,0 +1,9 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class="container mt-3">
+        <div class="alert {{ alert_class }}" role="alert">
+            <p>{{ text }}</p>
+        </div>
+        <a class="btn btn-primary" href="/dashboard/">Back to Dashboard</a>
+    </div>
+{% endblock %}
