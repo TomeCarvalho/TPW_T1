@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
@@ -52,14 +52,24 @@ def dashboard(request):
                 q &= Q(price__lte=upper)
             if lower:
                 q &= Q(price__gte=lower)
+            if request.user.is_authenticated:
+                q &= ~Q(seller=request.user)
+                if not request.user.is_superuser:
+                    q &= Q(hidden=False)
+            else:
+                q &= Q(hidden=False)
+
             product_list = Product.objects.filter(q)
     else:
         form = SearchForm()
         search_prompt = request.GET.get('search_prompt', '')
-        if search_prompt:
-            product_list = Product.objects.filter(name__icontains=search_prompt)
+        product_list = Product.objects.filter(name__icontains=search_prompt) if search_prompt else Product.objects.all()
+        if request.user.is_authenticated:
+            product_list = product_list.exclude(seller=request.user)
+            if not request.user.is_superuser:
+                product_list = product_list.exclude(hidden=True)
         else:
-            product_list = Product.objects.all()
+            product_list = product_list.exclude(hidden=True)
 
     pgs = zip_longest(*(iter(product_list),) * 3)  # chunky!
     tparams = {
@@ -111,6 +121,7 @@ def myproducts(request):
     }
     return render(request, "dashboard.html", tparams)
 
+
 def newproduct(request):
     if request.method == "POST":
         form = ProductForm(request.POST)
@@ -130,10 +141,11 @@ def newproduct(request):
             else:
                 real_group = Group(name=group)
                 real_group.save()
-            new_product = Product(category=category,name=name,stock=stock,description=description,price=price,seller=request.user)
+            new_product = Product(category=category, name=name, stock=stock, description=description, price=price,
+                                  seller=request.user)
             new_product.save()
             new_product.group.add(real_group)
-            image = ProductImage(url=img,product=new_product)
+            image = ProductImage(url=img, product=new_product)
             image.save()
             return redirect(dashboard)
     else:
@@ -149,6 +161,8 @@ def product_page(request, i):
     """Returns the page of the product with ID i if it exists, or an error page if not."""
     try:
         product = Product.objects.get(id=i)
+        if product.hidden and not request.user.is_superuser:
+            return redirect(dashboard)
         images = product.images
         groups = product.group.all()
         n = range(1, len(images))
@@ -163,7 +177,8 @@ def product_page(request, i):
             'seller': product.seller,
             'i': i,
             'groups': groups,
-            'logged': request.user.is_authenticated
+            'logged': request.user.is_authenticated,
+            'hidden_toggle_text': 'Unhide Product' if product.hidden else 'Hide Product'
         }
         return render(request, 'product_page.html', params)
     except ObjectDoesNotExist:
@@ -200,7 +215,8 @@ def add_to_cart(request):
         user_instance = ProductInstance.objects.get(client=user, product=product)
         if user_instance.quantity + quantity > product.stock:
             # messages.info(request, NOT_ENOUGH_STOCK_MSG)
-            print(f'Not enough stock of {product.name} for {user.username} ({user_instance.quantity + quantity}/{product.stock})')
+            print(
+                f'Not enough stock of {product.name} for {user.username} ({user_instance.quantity + quantity}/{product.stock})')
             return redirect(dashboard)
         user_instance.quantity += quantity
         user_instance.save()
@@ -286,3 +302,41 @@ def history(request):
         'sales': sales
     }
     return render(request, 'history.html', params)
+
+
+@login_required
+def add_stock(request):
+    """Increases the stock of a user's product"""
+    if request.method == 'POST':
+        product_id = request.POST['product_id']
+        quantity = request.POST['stock']
+    else:
+        return redirect(dashboard)
+    try:
+        quantity = int(quantity)
+    except ValueError:
+        # messages.info(request, INVALID_QTY_MSG)
+        print(f'ValueError with {product_id = }, {quantity = }')
+        return redirect(dashboard)
+    if quantity <= 0:
+        # messages.info(request, INVALID_QTY_MSG)
+        print(f'Invalid Quantity with {quantity = }')
+        return redirect(dashboard)
+    product = Product.objects.get(id=product_id)
+    product.stock += quantity
+    product.save()
+    print(f'Stock of {product.name} increased by {quantity}')
+    return redirect(dashboard)
+
+
+@user_passes_test(lambda user: user.is_superuser)
+def product_hidden_toggle(request):
+    """Hides/Unhides a product from users that aren't admins."""
+    if request.method == 'POST':
+        product_id = request.POST['product_id']
+    else:
+        return redirect(dashboard)
+    product = Product.objects.get(id=product_id)
+    product.hidden = not product.hidden
+    product.save()
+    return redirect(dashboard)

@@ -1,54 +1,54 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class="container">
-      <div class="heading">
-        <h1>
-          Shopping Cart
-        </h1>
-      </div>
+    <div class="container mt-3">
+        <div class="heading">
+            <h1>
+                Shopping Cart
+            </h1>
+        </div>
 
-      <div class="cart">
-        <div class="table">
+        <div class="cart">
+            <div class="table">
 
-          <div class="layout-inline row th">
-            <div class="col col-pro">Product</div>
-            <div class="col col-price align-center ">
-              Price
+                <div class="layout-inline row th">
+                    <div class="col col-pro">Product</div>
+                    <div class="col col-price align-center ">
+                        Price
+                    </div>
+                    <div class="col col-qty align-center">QTY</div>
+                    <div class="col">Total</div>
+                </div>
+
+                {% for product in products %}
+                    <div class="layout-inline row">
+
+                        <div class="col col-pro layout-inline">
+                            <p>{{ product.product.name }}</p>
+                        </div>
+
+                        <div class="col col-price col-numeric align-center ">
+                            <p>{{ product.product.price }}</p>
+                        </div>
+
+                        <div class="col col-qty layout-inline">
+                            <p>{{ product.quantity }}</p>
+                        </div>
+
+                        <div class="col col-total col-numeric">
+                            <p>{% widthratio product.product.price 1 product.quantity %}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="row layout-inline">
+                    <div class="col"></div>
+                    <div class="col"></div>
+                    <div class="col"></div>
+                    <div class="col">
+                        <p>Total: {{ total }} €</p>
+                    </div>
+                </div>
             </div>
-            <div class="col col-qty align-center">QTY</div>
-            <div class="col">Total</div>
-          </div>
-
-          {% for product in products %}
-              <div class="layout-inline row">
-
-                <div class="col col-pro layout-inline">
-                  <p>{{ product.product.name }}</p>
-                </div>
-
-                <div class="col col-price col-numeric align-center ">
-                  <p>{{ product.product.price }}</p>
-                </div>
-
-                <div class="col col-qty layout-inline">
-                    <p>{{ product.quantity }}</p>
-                </div>
-
-                <div class="col col-total col-numeric">
-                    <p>{% widthratio  product.product.price 1  product.quantity %}</p>
-                </div>
-              </div>
-            {% endfor %}
-              <div class="row layout-inline">
-                  <div class="col"></div>
-                  <div class="col"></div>
-                  <div class="col"></div>
-                   <div class="col">
-                     <p>Total: {{ total }} €</p>
-                   </div>
-             </div>
-           </div>
-      </div>
-          <a href="checkout" class="btn btn-outline-success my-2 my-sm-0 btn-update">Check Out</a>
+        </div>
+        <a href="checkout" class="btn btn-outline-success my-2 my-sm-0 btn-update">Check Out</a>
     </div>
 {% endblock %}

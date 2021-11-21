@@ -57,19 +57,40 @@
             {% endif %}
             <br>
             {% if logged %}
-                <form method="post" action="/add_to_cart">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="inputQuantity" class="sr-only">Quantity</label>
-                        <input class="form-control w-25 float-left mr-1" name="quantity" type="number" min="1"
-                               max="{{ stock }}"
-                               placeholder="Quantity" aria-label="Quantity" id="inputQuantity">
+                {% if user != seller %}
+                    <form method="post" action="/add_to_cart/">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="inputQuantity" class="sr-only">Quantity</label>
+                            <input class="form-control w-25 float-left mr-1" name="quantity" type="number" min="1"
+                                   max="{{ stock }}"
+                                   placeholder="Quantity" aria-label="Quantity" id="inputQuantity">
+                            <input name="product_id" class="d-none" type="number" value="{{ i }}">
+                            <input name="page" class="d-none" value="product_page.html">
+                            {#                    <a class="btn btn-primary" href="">Add to Cart</a>#}
+                            <input class="btn btn-primary" type="submit" value="Add to Cart"/>
+                        </div>
+                    </form>
+                {% else %}
+                    <form method="post" action="/add_stock/">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="stockQuantity" class="sr-only">Stock</label>
+                            <input class="form-control w-25 float-left mr-1" name="stock" type="number" min="1"
+                                   placeholder="Stock to add" aria-label="stock" id="stockQuantity">
+                            <input name="product_id" class="d-none" type="number" value="{{ i }}">
+                            <input name="page" class="d-none" value="product_page.html">
+                            <input class="btn btn-primary" type="submit" value="Add Stock"/>
+                        </div>
+                    </form>
+                {% endif %}
+                {% if request.user.is_superuser %}
+                    <form method="post" action="/product_hidden_toggle/">
+                        {% csrf_token %}
                         <input name="product_id" class="d-none" type="number" value="{{ i }}">
-                        <input name="page" class="d-none" value="product_page.html">
-                        {#                    <a class="btn btn-primary" href="">Add to Cart</a>#}
-                        <input class="btn btn-primary" type="submit" value="Add to Cart"/>
-                    </div>
-                </form>
+                        <input class="btn btn-primary" type="submit" value="{{ hidden_toggle_text }}"/>
+                    </form>
+                {% endif %}
             {% else %}
                 <a class="btn btn-secondary" href="/login">Log in to add products to your cart</a>
             {% endif %}

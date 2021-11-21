@@ -3,9 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 
 
-# Create your models here.
-
-
 class Group(models.Model):
     name = models.CharField(max_length=150)
 
@@ -18,6 +15,7 @@ class Product(models.Model):
     price = models.FloatField()
     seller = models.ForeignKey(User, on_delete=models.CASCADE)
     group = models.ManyToManyField(Group, blank=True)
+    hidden = models.BooleanField(default=False)
 
     @property
     def images(self):
