@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
     {% if my_products_page %}
-    <div class="container mt-3 p-1">
-        <a href="/newproduct/" class="btn btn-primary">+ NEW PRODUCT</a>
-    </div>
+        <div class="container mt-3 p-1">
+            <a href="/newproduct/" class="btn btn-primary">+ NEW PRODUCT</a>
+        </div>
     {% endif %}
     <div class="container mt-3 p-1">
         <form method="post">
@@ -45,36 +45,38 @@
             <div class="card-group">
                 {% for product in products %}
                     {% if product %}
-                        <div class="card">
-                            {% csrf_token %}
-                            <img class="card-img-top" src="{{ product.images.0.url }}" alt="Card image cap"
-                                 style="height: 18rem; object-fit: scale-down">
-                            <div class="card-body bg-secondary text-light">
-                                <h5 class="card-title">{{ product.name }}</h5>
-                                <p class="card-text max-lines">{{ product.description }}</p>
-                                <br>
-                                <p class="card-text">{{ product.price }}€</p>
-                                <a href="/products/{{ product.id }}" class="btn btn-primary">Visit Page</a>
-                                <a href="/products/{{ product.id }}" class="btn btn-primary">Add to Cart</a>
-                                {% if user.0.admin %}
-                                    {% if product.hidden %}
-                                        <form action="/unhidepage/" method="post">
-                                            {% csrf_token %}
-                                            <button class="btn btn-dark" style="margin-top: 1em" type="submit"
-                                                    value="{{ page.id }}" name="delete-page">Un-Hide Page
-                                            </button>
-                                        </form>
-                                    {% else %}
-                                        <form action="/hidepage/" method="post">
-                                            {% csrf_token %}
-                                            <button class="btn btn-dark" style="margin-top: 1em" type="submit"
-                                                    value="{{ product.id }}" name="delete-page">Hide Page
-                                            </button>
-                                        </form>
+                        <a class="text-white" href="/products/{{ product.id }}">
+                            <div class="card">
+                                {% csrf_token %}
+                                <img class="card-img-top" src="{{ product.images.0.url }}" alt="Card image cap"
+                                     style="height: 18rem; object-fit: scale-down">
+                                <div class="card-body bg-secondary text-light">
+                                    <h5 class="card-title">{{ product.name }}</h5>
+{#                                    <p class="card-text max-lines">{{ product.description }}</p>#}
+{#                                    <br>#}
+                                    <h5 class="card-text">{{ product.price }}€</h5>
+{#                                    <a href="/products/{{ product.id }}" class="btn btn-primary">Visit Page</a>#}
+                                    {#                                <a href="/products/{{ product.id }}" class="btn btn-primary">Add to Cart</a>#}
+                                    {% if user.0.admin %}
+                                        {% if product.hidden %}
+                                            <form action="/unhidepage/" method="post">
+                                                {% csrf_token %}
+                                                <button class="btn btn-dark" style="margin-top: 1em" type="submit"
+                                                        value="{{ page.id }}" name="delete-page">Un-Hide Page
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <form action="/hidepage/" method="post">
+                                                {% csrf_token %}
+                                                <button class="btn btn-dark" style="margin-top: 1em" type="submit"
+                                                        value="{{ product.id }}" name="delete-page">Hide Page
+                                                </button>
+                                            </form>
+                                        {% endif %}
                                     {% endif %}
-                                {% endif %}
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     {% else %}
                         <div class="card" style="visibility: hidden"></div>
                     {% endif %}

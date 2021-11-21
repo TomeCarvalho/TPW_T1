@@ -25,7 +25,9 @@ class PaymentForm(forms.Form):
 
 
 class SearchForm(forms.Form):
-    CATEGORIES = (('', '----------'), ('Pants', 'Pants'), ('Jeans', 'Jeans'), ('Shirts', 'Shirts'), ('Jackets', 'Jackets'), ('Underwear', 'Underwear'))
+    CATEGORIES = (
+        ('', '----------'), ('Pants', 'Pants'), ('Jeans', 'Jeans'), ('Shirts', 'Shirts'), ('Jackets', 'Jackets'),
+        ('Underwear', 'Underwear'))
     by_category = forms.ChoiceField(choices=CATEGORIES, required=False)
     all_groups = Group.objects.all()
     group_list = [('', '----------')]
@@ -38,12 +40,18 @@ class SearchForm(forms.Form):
     by_price_Upper = forms.IntegerField(required=False, label="Upper Limit")
     by_price_Upper.widget.attrs.update({'style': 'width: 3em'})
 
+
 class ProductForm(forms.Form):
-    CATEGORIES = (('', '----------'), ('Pants', 'Pants'), ('Jeans', 'Jeans'), ('Shirts', 'Shirts'), ('Jackets', 'Jackets'), ('Underwear', 'Underwear'))
-    category = forms.ChoiceField(label="Category",choices=CATEGORIES, required=False)
-    name = forms.CharField(label="Name",max_length=200, widget=forms.TextInput(attrs={'placeholder': 'Name'}))
-    stock = forms.IntegerField(label="Stock",widget=forms.NumberInput(attrs={'min': 0, 'max': 100}))
-    description = forms.CharField(label="Description",max_length=1000, widget=forms.TextInput(attrs={'placeholder': 'Description'}))
+    CATEGORIES = (
+        ('', '----------'), ('Pants', 'Pants'), ('Jeans', 'Jeans'), ('Shirts', 'Shirts'), ('Jackets', 'Jackets'),
+        ('Underwear', 'Underwear')
+    )
+    category = forms.ChoiceField(label="Category", choices=CATEGORIES, required=False)
+    name = forms.CharField(label="Name", max_length=200, widget=forms.TextInput(attrs={'placeholder': 'Name'}))
+    stock = forms.IntegerField(label="Stock", widget=forms.NumberInput(attrs={'min': 0, 'max': 100}))
+    description = forms.CharField(label="Description", max_length=1000,
+                                  widget=forms.TextInput(attrs={'placeholder': 'Description'}))
     price = forms.FloatField(label="Price")
-    group = forms.CharField(label="Group",max_length=150, widget=forms.TextInput(attrs={'placeholder': 'Name'}), required=False)
+    group = forms.CharField(label="Group", max_length=150, widget=forms.TextInput(attrs={'placeholder': 'Name'}),
+                            required=False)
     image = forms.URLField(label="Image URL")
