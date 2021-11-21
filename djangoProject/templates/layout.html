@@ -41,14 +41,15 @@
 
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0" style="width: 100%">
             {% if logged %}
-            <li class="nav-item {% if myProductsPage %} active {% endif %}">
-                <a class="nav-link" href="/myproducts">My Products</a>
-            </li>
-            <li class="nav-item {% if historyPage %} active {% endif %}">
-                <a class="nav-link" href="/history">History</a>
-            </li><li class="nav-item {% if historyPage %} active {% endif %}">
-                <a class="nav-link" href="/cart">Cart</a>
-            </li>
+                <li class="nav-item {% if myProductsPage %} active {% endif %}">
+                    <a class="nav-link" href="/myproducts">My Products</a>
+                </li>
+                <li class="nav-item {% if historyPage %} active {% endif %}">
+                    <a class="nav-link" href="/history">History</a>
+                </li>
+                <li class="nav-item {% if historyPage %} active {% endif %}">
+                    <a class="nav-link" href="/cart">Cart</a>
+                </li>
             {% endif %}
         </ul>
         <form action="/dashboard" method="get" class="form-inline my-2 my-lg-0"
@@ -56,18 +57,21 @@
             {% csrf_token %}
             <input name="search_prompt" class="form-control mr-sm-2" type="search" placeholder="Search"
                    aria-label="Search" style="width: 50%">
-            <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right: 0.5em" type="submit">Search!</button>
+            <button class="btn btn-outline-success my-2 my-sm-0" style="margin-right: 0.5em" type="submit">Search!
+            </button>
         </form>
         <ul class="navbar-nav ml-auto">
             {% if logged %}
                 <li class="nav-item">
                     <form id="logoutForm" action="/logout" method="get" class="form-inline my-2 my-lg-0">
-                        <button class="btn btn-secondary"><a href="javascript:document.getElementById('logoutForm').submit()">Log out</a></button>
+                        <button class="btn btn-secondary">
+                            <a class="text-white" href="javascript:document.getElementById('logoutForm').submit()">Log out</a>
+                        </button>
                     </form>
                 </li>
             {% else %}
                 <li class="nav-item {% if loginPage %} active {% endif %}">
-                    <a class="nav-link btn btn-secondary" href="/login">Log in</a>
+                    <a class="text-white nav-link btn btn-secondary" href="/login">Log in</a>
                 </li>
             {% endif %}
         </ul>

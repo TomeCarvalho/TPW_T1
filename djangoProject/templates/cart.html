@@ -7,41 +7,42 @@
             </h1>
         </div>
 
-      <div class="cart">
-        <table class="table table-striped table-dark">
+        <div class="cart">
+            <table class="table table-striped table-dark">
+                <tr>
+                    <th style="width: 27%">Product</th>
+                    <th style="width: 27%">Price</th>
+                    <th style="width: 27%">QTY</th>
+                    <th style="width: 15%">Total</th>
+                    <th style="width: 4%"></th>
+                </tr>
+                {% for product in products %}
+                    <tr>
+                        <td>{{ product.product.name }}</td>
+                        <td>{{ product.product.price|floatformat:2 }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>{% widthratio product.product.price|floatformat:2 1 product.quantity %} €</td>
+                        <td>
+                            <form method="post" action="/removefromcart/">
+                                {% csrf_token %}
+                                <input name="productInstance" class="d-none" type="number" value="{{ product.id }}">
+                                <input class="button btn-danger rounded" type="submit" value="X">
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
 
-          <tr>
-            <th style="width: 27%">Product</th>
-            <th style="width: 27%">Price</th>
-            <th style="width: 27%">QTY</th>
-            <th style="width: 15%">Total</th>
-              <th style="width: 4%"></th>
-          </tr>
-          {% for product in products %}
-              <tr>
-                <td>{{ product.product.name }}</td>
-                <td>{{ product.product.price }}</td>
-                <td>{{ product.quantity }}</td>
-                <td>{% widthratio  product.product.price 1  product.quantity %} €</td>
-                <td>
-                    <form method="post" action="/removefromcart/">
-                        {% csrf_token %}
-                        <input name="productInstance" class="d-none" type="number" value="{{ product.id }}">
-                        <input class="button btn-danger" type="submit" value="X">
-                    </form>
-                </td>
-              </tr>
-          {% endfor %}
-
-          <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td align="right">Total: {{ total }} €</td>
-              <td></td>
-          </tr>
-        </table>
-      </div>
-          <a href="checkout" class="btn btn-outline-success my-2 my-sm-0 btn-update">Check Out</a>
-    </div>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td align="right">Total: {{ total|floatformat:2 }} €</td>
+                    <td></td>
+                </tr>
+            </table>
+            {% if products %}
+                </div>
+                <a href="checkout" class="btn btn-outline-success my-2 my-sm-0 btn-update">Check Out</a>
+                </div>
+            {% endif %}
 {% endblock %}
